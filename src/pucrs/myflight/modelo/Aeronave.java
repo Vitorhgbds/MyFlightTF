@@ -25,7 +25,7 @@ public class Aeronave implements Imprimivel, Comparable<Aeronave> {
 
     @Override
     public String toString() {
-        return codigo + " - " + descricao + " (" + capacidade + ")";
+        return codigo + " - " + descricao + " (" + capacidade + ")\n";
     }
 
     // Implementação da interface Imprimivel

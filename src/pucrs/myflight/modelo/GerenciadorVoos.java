@@ -1,5 +1,11 @@
 package pucrs.myflight.modelo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
@@ -20,6 +26,21 @@ public class GerenciadorVoos {
     public void ordenarDataHora() {
         //voos.sort(Comparator.comparing(v -> v.getDatahora()));
         voos.sort(Comparator.comparing(Voo::getDatahora));
+    }
+
+    public void carregaDados(String nomeArq){
+        Path path1 = Paths.get(nomeArq);
+        try (BufferedReader reader = Files.newBufferedReader(path1, Charset.forName("utf8"))) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] dados = line.split(";");
+                CiaAerea nova = new CiaAerea(dados[0], dados[1]);
+                adicionar(nova);
+            }
+        }
+        catch (IOException x) {
+            System.err.format("Erro de E/S: %s%n", x);
+        }
     }
 
     public void ordenarDataHoraDuracao() {
@@ -61,5 +82,15 @@ public class GerenciadorVoos {
                 result.add(v);
         }
         return result;
+    }
+
+    public String toString(){
+        StringBuilder msg = new StringBuilder("Gerenciador de Voos\n--------------------\n");
+
+        voos.forEach(msg::append);
+
+        msg.append("\n- - - - - - - - - - -\n");
+
+        return msg.toString();
     }
 }

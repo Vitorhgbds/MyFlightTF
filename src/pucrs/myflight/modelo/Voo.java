@@ -54,7 +54,7 @@ public class Voo {
     @Override
     public String toString() {
         return rota + " : " + formatador.format(datahora) + " [" +  duracao + "] - "
-                + status;
+                + status + "\n";
     }
 }
 

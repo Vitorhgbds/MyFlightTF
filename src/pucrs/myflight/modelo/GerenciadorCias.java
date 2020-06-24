@@ -16,7 +16,6 @@ public class GerenciadorCias {
     public static GerenciadorCias getInstance() {
         if ( instance == null )
             instance = new GerenciadorCias();
-
         return instance;
     }
 
@@ -62,4 +61,16 @@ public class GerenciadorCias {
                return cia;
         return null;
     }
+
+    public String toString(){
+        StringBuilder msg = new StringBuilder("Gerenciador de Airlines\n--------------------\n");
+
+        empresas.values()
+                .forEach(msg::append);
+
+        msg.append("\n- - - - - - - - - - -\n");
+
+        return msg.toString();
+    }
+
 }

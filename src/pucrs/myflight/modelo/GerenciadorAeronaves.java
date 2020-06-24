@@ -1,5 +1,11 @@
 package pucrs.myflight.modelo;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +22,21 @@ public class GerenciadorAeronaves {
     public static GerenciadorAeronaves getInstance(){
         if(instance == null) instance = new GerenciadorAeronaves();
         return instance;
+    }
+
+    public void carregaDados(String nomeArq){
+        Path path1 = Paths.get(nomeArq);
+        try (BufferedReader reader = Files.newBufferedReader(path1, Charset.forName("utf8"))) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String[] dados = line.split(";");
+                Aeronave nova = new Aeronave(dados[0], dados[1], Integer.parseInt(dados[2]));
+                adicionar(nova);
+            }
+        }
+        catch (IOException x) {
+            System.err.format("Erro de E/S: %s%n", x);
+        }
     }
 
     public void adicionar(Aeronave aviao) {
@@ -57,5 +78,15 @@ public class GerenciadorAeronaves {
     public void ordenarCodigo() {
         avioes.sort( (Aeronave a1, Aeronave a2) ->
             a1.getCodigo().compareTo(a2.getCodigo()));
+    }
+
+    public String toString(){
+        StringBuilder msg = new StringBuilder("Gerenciador de Aeronaves\n--------------------\n");
+
+        avioes.forEach(msg::append);
+
+        msg.append("\n- - - - - - - - - - -\n");
+
+        return msg.toString();
     }
 }
