@@ -29,14 +29,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import pucrs.myflight.modelo.Aeroporto;
-import pucrs.myflight.modelo.CiaAerea;
-import pucrs.myflight.modelo.Geo;
-import pucrs.myflight.modelo.GerenciadorAeronaves;
-import pucrs.myflight.modelo.GerenciadorAeroportos;
-import pucrs.myflight.modelo.GerenciadorCias;
-import pucrs.myflight.modelo.GerenciadorRotas;
-import pucrs.myflight.modelo.Rota;
+import pucrs.myflight.modelo.*;
 
 public class JanelaFX extends Application {
 
@@ -46,7 +39,7 @@ public class JanelaFX extends Application {
 	private GerenciadorAeroportos gerAero;
 	private GerenciadorRotas gerRotas;
 	private GerenciadorAeronaves gerAvioes;
-
+	private GerenciadorPaises gerPaises;
 	private GerenciadorMapa gerenciador;
 
 	private EventosMouse mouse;
@@ -103,9 +96,16 @@ public class JanelaFX extends Application {
 	private void setup() {
 
 		gerCias = GerenciadorCias.getInstance();
-		gerAero = GerenciadorAeroportos.getInstance();
-		gerRotas = GerenciadorRotas.getInstance();
+		gerCias.carregaDados("airlines.dat");
+		gerPaises = GerenciadorPaises.getInstance();
+		gerPaises.carregaDados("countries.dat");
 		gerAvioes = GerenciadorAeronaves.getInstance();
+		gerAvioes.carregaDados("equipment.dat");
+		gerAero = GerenciadorAeroportos.getInstance();
+		gerAero.carregaDados("airports.dat");
+		gerRotas = GerenciadorRotas.getInstance();
+		gerRotas.carregaDados("routes.dat");
+
 	}
 
 	private void consulta1() {
@@ -113,10 +113,10 @@ public class JanelaFX extends Application {
 		// Lista para armazenar o resultado da consulta
 		List<MyWaypoint> lstPoints = new ArrayList<>();
 
-		Aeroporto poa = new Aeroporto("POA", "Salgado Filho", new Geo(-29.9939, -51.1711));
-		Aeroporto gru = new Aeroporto("GRU", "Guarulhos", new Geo(-23.4356, -46.4731));
-		Aeroporto lis = new Aeroporto("LIS", "Lisbon", new Geo(38.772,-9.1342));
-		Aeroporto mia = new Aeroporto("MIA", "Miami International", new Geo(25.7933, -80.2906));
+		Aeroporto poa = new Aeroporto("POA", "Salgado Filho", new Geo(-29.9939, -51.1711), gerPaises.buscaCodigo("BR"));
+		Aeroporto gru = new Aeroporto("GRU", "Guarulhos", new Geo(-23.4356, -46.4731), gerPaises.buscaCodigo("BR"));
+		Aeroporto lis = new Aeroporto("LIS", "Lisbon", new Geo(38.772,-9.1342), gerPaises.buscaCodigo("BR"));
+		Aeroporto mia = new Aeroporto("MIA", "Miami International", new Geo(25.7933, -80.2906), gerPaises.buscaCodigo("BR"));
 		
 		gerenciador.clear();
 		Tracado tr = new Tracado();

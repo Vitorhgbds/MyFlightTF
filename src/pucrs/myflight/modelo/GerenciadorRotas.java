@@ -39,12 +39,19 @@ public class GerenciadorRotas {
     }
 
     public void carregaDados(String nomeArq){
+        GerenciadorAeroportos gerA = GerenciadorAeroportos.getInstance();
+        GerenciadorCias gerCia = GerenciadorCias.getInstance();
+        GerenciadorAeronaves gerAero = GerenciadorAeronaves.getInstance();
+
         Path path1 = Paths.get(nomeArq);
         try (BufferedReader reader = Files.newBufferedReader(path1, Charset.forName("utf8"))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String[] dados = line.split(";");
-                CiaAerea nova = new CiaAerea(dados[0], dados[1]);
+                Rota nova = new Rota(gerCia.buscarCodigo(dados[0]),
+                        gerA.buscarCodigo(dados[1]),
+                        gerA.buscarCodigo(dados[2]),
+                        gerAero.buscarCodigo(dados[5]));
                 adicionar(nova);
             }
         }

@@ -28,20 +28,20 @@ public class GerenciadorVoos {
         voos.sort(Comparator.comparing(Voo::getDatahora));
     }
 
-    public void carregaDados(String nomeArq){
+   /* public void carregaDados(String nomeArq){
         Path path1 = Paths.get(nomeArq);
         try (BufferedReader reader = Files.newBufferedReader(path1, Charset.forName("utf8"))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String[] dados = line.split(";");
-                CiaAerea nova = new CiaAerea(dados[0], dados[1]);
+                Voo nova = new Voo(dados[0], dados[1]);
                 adicionar(nova);
             }
         }
         catch (IOException x) {
             System.err.format("Erro de E/S: %s%n", x);
         }
-    }
+    }*/
 
     public void ordenarDataHoraDuracao() {
         voos.sort(Comparator.comparing(Voo::getDatahora).

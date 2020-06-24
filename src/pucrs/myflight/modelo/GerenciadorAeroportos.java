@@ -40,12 +40,15 @@ public class GerenciadorAeroportos {
     }
 
     public void carregaDados(String nomeArq){
+        GerenciadorPaises gerPaises = GerenciadorPaises.getInstance();
         Path path1 = Paths.get(nomeArq);
         try (BufferedReader reader = Files.newBufferedReader(path1, Charset.forName("utf8"))) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String[] dados = line.split(";");
-                CiaAerea nova = new CiaAerea(dados[0], dados[1]);
+                Aeroporto nova = new Aeroporto(dados[0], dados[3],
+                        new Geo(Double.parseDouble(dados[1]), Double.parseDouble(dados[2])),
+                        gerPaises.buscaCodigo("BR"));
                 adicionar(nova);
             }
         }
