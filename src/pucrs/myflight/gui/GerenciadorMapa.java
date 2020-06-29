@@ -152,7 +152,7 @@ public class GerenciadorMapa {
 					int y[] = new int[pontos.size()];
 					
 					Point2D p0 = map.convertGeoPositionToPoint(pontos.get(0));
-					Point2D p1 = map.convertGeoPositionToPoint(pontos.get(1));
+						Point2D p1 = map.convertGeoPositionToPoint(pontos.get(1));
 					
 					int xmid = (int)(p0.getX() + p1.getX()) / 2;
 					int ymid = (int)(p0.getY() + p1.getY()) / 2;

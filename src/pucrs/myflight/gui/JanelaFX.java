@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
@@ -80,7 +81,11 @@ public class JanelaFX extends Application {
 
 		btnConsulta1.setOnAction(e -> {
 			consulta1();
-		});			
+		});
+		btnConsulta2.setOnAction(e -> {
+			consulta2();
+		});
+
 
 		pane.setCenter(mapkit);
 		pane.setTop(leftPane);
@@ -113,46 +118,58 @@ public class JanelaFX extends Application {
 		// Lista para armazenar o resultado da consulta
 		List<MyWaypoint> lstPoints = new ArrayList<>();
 
-		Aeroporto poa = new Aeroporto("POA", "Salgado Filho", new Geo(-29.9939, -51.1711), gerPaises.buscaCodigo("BR"));
-		Aeroporto gru = new Aeroporto("GRU", "Guarulhos", new Geo(-23.4356, -46.4731), gerPaises.buscaCodigo("BR"));
-		Aeroporto lis = new Aeroporto("LIS", "Lisbon", new Geo(38.772,-9.1342), gerPaises.buscaCodigo("BR"));
-		Aeroporto mia = new Aeroporto("MIA", "Miami International", new Geo(25.7933, -80.2906), gerPaises.buscaCodigo("BR"));
-		
-		gerenciador.clear();
-		Tracado tr = new Tracado();
-		tr.setLabel("Teste");
-		tr.setWidth(5);
-		tr.setCor(new Color(0,0,0,60));
-		tr.addPonto(poa.getLocal());
-		tr.addPonto(mia.getLocal());
 
-		gerenciador.addTracado(tr);
-		
-		Tracado tr2 = new Tracado();
-		tr2.setWidth(5);
-		tr2.setCor(Color.BLUE);
-		tr2.addPonto(gru.getLocal());
-		tr2.addPonto(lis.getLocal());
-		gerenciador.addTracado(tr2);
-		
+		gerenciador.clear();
+
+		gerRotas.buscaPorCia("AD").forEach(rota -> {
+			Tracado tr = new Tracado();
+			tr.setWidth(5);
+			tr.setCor(new Color(0,0,0,60));
+			tr.addPonto(rota.getOrigem().getLocal());
+			tr.addPonto(rota.getDestino().getLocal());
+			gerenciador.addTracado(tr);
+		});
+
+		gerRotas.buscaPorCia("AD").stream()
+                .collect(Collectors.groupingBy(Rota::getOrigem,Collectors.counting()))
+                .forEach((aeroporto, numero) -> {
+                    if(numero < 10) {
+                        lstPoints.add(new MyWaypoint(new Color(0,0,255,50), aeroporto.getCodigo(),
+								aeroporto.getLocal(), 10));
+                    }
+                    else if(numero < 50) {
+                        lstPoints.add(new MyWaypoint(new Color(255,255,0,50), aeroporto.getCodigo(),
+								aeroporto.getLocal(), 15));
+                    }
+                    else {
+                        lstPoints.add(new MyWaypoint(new Color(255,0,0,50), aeroporto.getCodigo(),
+								aeroporto.getLocal(), 20));
+                    }
+                });
+        gerenciador.setPontos(lstPoints);
+
 		// Adiciona os locais de cada aeroporto (sem repetir) na lista de
 		// waypoints
-		
-		lstPoints.add(new MyWaypoint(Color.RED, poa.getCodigo(), poa.getLocal(), 5));
-		lstPoints.add(new MyWaypoint(Color.RED, gru.getCodigo(), gru.getLocal(), 5));
-		lstPoints.add(new MyWaypoint(Color.RED, lis.getCodigo(), lis.getLocal(), 5));
-		lstPoints.add(new MyWaypoint(Color.RED, mia.getCodigo(), mia.getLocal(), 5));
+
+//		lstPoints.add(new MyWaypoint(Color.RED, poa.getCodigo(), poa.getLocal(), 5));
+//		lstPoints.add(new MyWaypoint(Color.RED, gru.getCodigo(), gru.getLocal(), 5));
+//		lstPoints.add(new MyWaypoint(Color.RED, lis.getCodigo(), lis.getLocal(), 5));
+//		lstPoints.add(new MyWaypoint(Color.RED, mia.getCodigo(), mia.getLocal(), 5));
 
 		// Para obter um ponto clicado no mapa, usar como segue:
 		// GeoPosition pos = gerenciador.getPosicao();
 
 		// Informa o resultado para o gerenciador
-		gerenciador.setPontos(lstPoints);
+		//gerenciador.setPontos(lstPoints);
 
 		// Quando for o caso de limpar os traçados...
 		// gerenciador.clear();
 
 		gerenciador.getMapKit().repaint();
+	}
+
+	public void consulta2(){
+
 	}
 
 	private class EventosMouse extends MouseAdapter {

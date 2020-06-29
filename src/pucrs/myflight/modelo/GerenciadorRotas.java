@@ -86,6 +86,17 @@ public class GerenciadorRotas {
         return result;
     }
 
+    public ArrayList<Rota> buscaPorCia(String codigo){
+        ArrayList<Rota> result = new ArrayList<>();
+        rotas.forEach( r -> {
+            if(r.getCia().getCodigo().equals(codigo)){
+                result.add(r);
+            }
+                }
+                );
+        return result;
+    }
+
     public String toString(){
         StringBuilder msg = new StringBuilder("Gerenciador de Rotas\n--------------------\n");
 
