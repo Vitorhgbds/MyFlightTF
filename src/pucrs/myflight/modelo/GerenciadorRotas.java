@@ -97,6 +97,18 @@ public class GerenciadorRotas {
         return result;
     }
 
+    public ArrayList<Rota> buscaPorPais(String codigo){
+        ArrayList<Rota> result = new ArrayList<>();
+        rotas.forEach( r -> {
+                    if(r.getOrigem().getPais().getCodigo().equals(codigo) ||
+                            r.getDestino().getPais().getCodigo().equals(codigo) && !result.contains(r)){
+                        result.add(r);
+                    }
+                }
+        );
+        return result;
+    }
+
     public String toString(){
         StringBuilder msg = new StringBuilder("Gerenciador de Rotas\n--------------------\n");
 

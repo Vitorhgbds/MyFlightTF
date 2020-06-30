@@ -1,6 +1,6 @@
 package pucrs.myflight.gui;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 
 import javax.swing.SwingUtilities;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -45,9 +49,6 @@ public class JanelaFX extends Application {
 
 	private EventosMouse mouse;
 
-	private ObservableList<CiaAerea> comboCiasData;
-	private ComboBox<CiaAerea> comboCia;
-
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
@@ -65,8 +66,8 @@ public class JanelaFX extends Application {
 		GridPane leftPane = new GridPane();
 
 		leftPane.setAlignment(Pos.CENTER);
-		leftPane.setHgap(10);
-		leftPane.setVgap(10);
+		leftPane.setHgap(30);
+		leftPane.setVgap(30);
 		leftPane.setPadding(new Insets(10, 10, 10, 10));
 
 		Button btnConsulta1 = new Button("Consulta 1");
@@ -74,10 +75,16 @@ public class JanelaFX extends Application {
 		Button btnConsulta3 = new Button("Consulta 3");
 		Button btnConsulta4 = new Button("Consulta 4");
 
+//		ObservableList<CiaAerea> ciaList = FXCollections.observableList(gerCias.listarTodas());
+//		ComboBox<CiaAerea> ciasCombo = new ComboBox<>(ciaList);
+
 		leftPane.add(btnConsulta1, 0, 0);
 		leftPane.add(btnConsulta2, 2, 0);
 		leftPane.add(btnConsulta3, 3, 0);
 		leftPane.add(btnConsulta4, 4, 0);
+		//leftPane.add(ciasCombo, 5, 0);
+
+
 
 		btnConsulta1.setOnAction(e -> {
 			consulta1();
@@ -114,14 +121,33 @@ public class JanelaFX extends Application {
 	}
 
 	private void consulta1() {
-
 		// Lista para armazenar o resultado da consulta
-		List<MyWaypoint> lstPoints = new ArrayList<>();
-
-
 		gerenciador.clear();
 
-		gerRotas.buscaPorCia("AD").forEach(rota -> {
+		ObservableList<CiaAerea> ciaList = FXCollections.observableList(gerCias.listarTodas());
+		ComboBox<CiaAerea> ciaCombo = new ComboBox<>(ciaList);
+
+		FlowPane pane2 = new FlowPane();
+		Label label = new Label("Selecione uma companhia aerea para mostrar rotas!");
+		Button btn = new Button("Confirmar");
+		pane2.setHgap(20);
+		pane2.setVgap(30);
+		pane2.setAlignment(Pos.CENTER);
+		pane2.getChildren().addAll(label,ciaCombo,btn);
+		Scene sc = new Scene(pane2);
+		Stage st = new Stage();
+		st.setScene(sc);
+		st.setTitle("Seleção de companhia");
+		st.showAndWait();
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				st.close();
+			}
+		});
+
+		String ciaCodigo = ciaCombo.getValue().getCodigo();
+		gerRotas.buscaPorCia(ciaCodigo).forEach(rota -> {
 			Tracado tr = new Tracado();
 			tr.setWidth(5);
 			tr.setCor(new Color(0,0,0,60));
@@ -130,23 +156,7 @@ public class JanelaFX extends Application {
 			gerenciador.addTracado(tr);
 		});
 
-		gerRotas.buscaPorCia("AD").stream()
-                .collect(Collectors.groupingBy(Rota::getOrigem,Collectors.counting()))
-                .forEach((aeroporto, numero) -> {
-                    if(numero < 10) {
-                        lstPoints.add(new MyWaypoint(new Color(0,0,255,50), aeroporto.getCodigo(),
-								aeroporto.getLocal(), 10));
-                    }
-                    else if(numero < 50) {
-                        lstPoints.add(new MyWaypoint(new Color(255,255,0,50), aeroporto.getCodigo(),
-								aeroporto.getLocal(), 15));
-                    }
-                    else {
-                        lstPoints.add(new MyWaypoint(new Color(255,0,0,50), aeroporto.getCodigo(),
-								aeroporto.getLocal(), 20));
-                    }
-                });
-        gerenciador.setPontos(lstPoints);
+
 
 		// Adiciona os locais de cada aeroporto (sem repetir) na lista de
 		// waypoints
@@ -169,7 +179,54 @@ public class JanelaFX extends Application {
 	}
 
 	public void consulta2(){
+		List<MyWaypoint> lstPoints = new ArrayList<>();
 
+		gerenciador.clear();
+
+		ObservableList<Pais> paisList = FXCollections.observableList(gerPaises.listarTodos());
+		ComboBox<Pais> paisCombo = new ComboBox<>(paisList);
+
+		FlowPane pane2 = new FlowPane();
+		Label label = new Label("Selecione o país para visualizar o fluxo no!");
+		Button btn = new Button("Confirmar");
+		pane2.setHgap(20);
+		pane2.setVgap(30);
+		pane2.setAlignment(Pos.CENTER);
+		pane2.getChildren().addAll(label,paisCombo,btn);
+		Scene sc = new Scene(pane2);
+		Stage st = new Stage();
+		st.setScene(sc);
+		st.setTitle("Seleção de Paises");
+		st.showAndWait();
+		btn.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				st.close();
+			}
+		});
+
+//		.forEach((aeroporto, numero) -> {
+//			if(numero < 10) {
+//				lstPoints.add(new MyWaypoint(new Color(0,0,255,50), aeroporto.getCodigo(),
+//						aeroporto.getLocal(), 10));
+//			}
+//			else if(numero < 50) {
+//				lstPoints.add(new MyWaypoint(new Color(255,255,0,50), aeroporto.getCodigo(),
+//						aeroporto.getLocal(), 15));
+//			}
+//			else {
+//				lstPoints.add(new MyWaypoint(new Color(255,0,0,50), aeroporto.getCodigo(),
+//						aeroporto.getLocal(), 20));
+//			}
+//		});
+
+		Map<Aeroporto, Long> contador = gerRotas.buscaPorCia("AD").stream()
+				.collect(Collectors.groupingBy(Rota::getOrigem,Collectors.counting()));
+
+
+
+		gerenciador.setPontos(lstPoints);
+		gerenciador.getMapKit().repaint();
 	}
 
 	private class EventosMouse extends MouseAdapter {

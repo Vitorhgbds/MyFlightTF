@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class GerenciadorPaises {
     private Set<Pais> paises;
@@ -43,6 +44,10 @@ public class GerenciadorPaises {
         catch (IOException x) {
             System.err.format("Erro de E/S: %s%n", x);
         }
+    }
+
+    public Set<Pais> listarTodos(){
+        return new HashSet<>(paises);
     }
 
     public String toString(){
