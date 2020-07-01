@@ -3,9 +3,11 @@ package pucrs.myflight.modelo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -27,13 +29,13 @@ public class GerenciadorPaises {
     }
 
     public Pais buscaCodigo(String codigo){
-        return paises.stream().filter(p -> p.getCodigo().equals(codigo))
+        return paises.stream().filter(p -> p.getCodigo().equalsIgnoreCase(codigo))
                 .findFirst().get();
     }
 
     public void carregaDados(String nomeArq){
         Path path1 = Paths.get(nomeArq);
-        try (BufferedReader reader = Files.newBufferedReader(path1, Charset.forName("utf8"))) {
+        try (BufferedReader reader = Files.newBufferedReader(path1, StandardCharsets.UTF_8)) {
             String line = null;
             while ((line = reader.readLine()) != null) {
                 String[] dados = line.split(";");
@@ -46,8 +48,8 @@ public class GerenciadorPaises {
         }
     }
 
-    public Set<Pais> listarTodos(){
-        return new HashSet<>(paises);
+    public ArrayList<Pais> listarTodos(){
+        return new ArrayList<>(paises);
     }
 
     public String toString(){

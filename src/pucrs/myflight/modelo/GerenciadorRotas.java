@@ -99,13 +99,9 @@ public class GerenciadorRotas {
 
     public ArrayList<Rota> buscaPorPais(String codigo){
         ArrayList<Rota> result = new ArrayList<>();
-        rotas.forEach( r -> {
-                    if(r.getOrigem().getPais().getCodigo().equals(codigo) ||
-                            r.getDestino().getPais().getCodigo().equals(codigo) && !result.contains(r)){
-                        result.add(r);
-                    }
-                }
-        );
+        rotas.stream().filter(r -> r.getOrigem().getPais().getCodigo().equals(codigo) ||
+                r.getDestino().getPais().getCodigo().equalsIgnoreCase(codigo))
+                .forEach(result::add);
         return result;
     }
 

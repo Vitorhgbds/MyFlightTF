@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class GerenciadorAeroportos {
 
@@ -48,13 +49,19 @@ public class GerenciadorAeroportos {
                 String[] dados = line.split(";");
                 Aeroporto nova = new Aeroporto(dados[0], dados[3],
                         new Geo(Double.parseDouble(dados[1]), Double.parseDouble(dados[2])),
-                        gerPaises.buscaCodigo("BR"));
+                        gerPaises.buscaCodigo(dados[4]));
                 adicionar(nova);
             }
         }
         catch (IOException x) {
             System.err.format("Erro de E/S: %s%n", x);
         }
+    }
+
+    public ArrayList<Aeroporto> buscaPorPais(String codPais){
+        return aeroportos.stream()
+                .filter(a -> a.getPais().getCodigo().equals(codPais))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public String toString(){

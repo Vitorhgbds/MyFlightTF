@@ -190,7 +190,7 @@ public class JanelaFX extends Application {
 		Label label = new Label("Selecione o país para visualizar o fluxo no!");
 		Button btn = new Button("Confirmar");
 		pane2.setHgap(20);
-		pane2.setVgap(30);
+		pane2.setVgap(40);
 		pane2.setAlignment(Pos.CENTER);
 		pane2.getChildren().addAll(label,paisCombo,btn);
 		Scene sc = new Scene(pane2);
@@ -198,32 +198,44 @@ public class JanelaFX extends Application {
 		st.setScene(sc);
 		st.setTitle("Seleção de Paises");
 		st.showAndWait();
-		btn.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				st.close();
+		btn.setOnAction(e -> {
+			st.close();
+		});
+
+		String paisCodigo = paisCombo.getValue().getCodigo();
+
+		Map<Aeroporto, Long> fluxoSaida = gerRotas.buscaPorPais(paisCodigo).stream() //listando todas as rotas
+				.filter(r -> r.getOrigem().getPais().getCodigo().equals(paisCodigo)) //filtrando para as rotas que tem origem no brasil
+				.collect(Collectors.groupingBy(Rota::getOrigem,Collectors.counting()));  //agrupando o aeroporto de origem, quantidade de rotas que saem desse aeroporto
+
+		System.out.println(fluxoSaida.values());
+		Map<Aeroporto, Long> fluxoChegada = gerRotas.buscaPorPais(paisCodigo).stream()
+				.filter(r -> r.getDestino().getPais().getCodigo().equals(paisCodigo))
+				.collect(Collectors.groupingBy(Rota::getDestino,Collectors.counting())); //agrupando o aeroporto de destino, quantidade de rotas que chegam nesse aeroporto
+
+		fluxoSaida.forEach((aeroporto, fluxo) -> {
+			if(!fluxoChegada.containsKey(aeroporto)){ //se nenhuma rota tem destino nesse aeroporto então ele adiciona na lista
+				fluxoChegada.put(aeroporto, fluxo);
+			}
+			else{
+				fluxoChegada.put(aeroporto, fluxoChegada.get(aeroporto) + fluxo); //se o aeroporto já existir na lista ele soma fluxo de saída + fluxo de chegada
 			}
 		});
 
-//		.forEach((aeroporto, numero) -> {
-//			if(numero < 10) {
-//				lstPoints.add(new MyWaypoint(new Color(0,0,255,50), aeroporto.getCodigo(),
-//						aeroporto.getLocal(), 10));
-//			}
-//			else if(numero < 50) {
-//				lstPoints.add(new MyWaypoint(new Color(255,255,0,50), aeroporto.getCodigo(),
-//						aeroporto.getLocal(), 15));
-//			}
-//			else {
-//				lstPoints.add(new MyWaypoint(new Color(255,0,0,50), aeroporto.getCodigo(),
-//						aeroporto.getLocal(), 20));
-//			}
-//		});
-
-		Map<Aeroporto, Long> contador = gerRotas.buscaPorCia("AD").stream()
-				.collect(Collectors.groupingBy(Rota::getOrigem,Collectors.counting()));
-
-
+		fluxoChegada.forEach((aeroporto, numero) -> {
+			if(numero < 50) {
+				lstPoints.add(new MyWaypoint(new Color(0,0,255,50), aeroporto.getCodigo(),
+						aeroporto.getLocal(), 10));
+			}
+			else if(numero < 100) {
+				lstPoints.add(new MyWaypoint(new Color(255,255,0,50), aeroporto.getCodigo(),
+						aeroporto.getLocal(), 15));
+			}
+			else {
+				lstPoints.add(new MyWaypoint(new Color(255,0,0,50), aeroporto.getCodigo(),
+						aeroporto.getLocal(), 20));
+			}
+		});
 
 		gerenciador.setPontos(lstPoints);
 		gerenciador.getMapKit().repaint();
